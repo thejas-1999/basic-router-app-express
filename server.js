@@ -2,7 +2,11 @@ const express = require("express");
 
 const app = express();
 
+const route = require("./router");
+
 const PORT = process.env.PORT || 3000;
+
+app.use("/api", route);
 
 //home route
 app.get("/", (req, res) => {
