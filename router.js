@@ -16,7 +16,7 @@ route.post("/accounts", (req, res) => {
   res.json(accounts);
 });
 
-// Get account by id
+// Get account by id(routing parameters)
 route.get("/accounts/:id", (req, res) => {
   const parseId = parseInt(req.params.id);
   const getAccount = accounts.find((account) => account.id === parseId);
@@ -26,6 +26,62 @@ route.get("/accounts/:id", (req, res) => {
   } else {
     res.json({ userData: [getAccount] });
   }
+});
+
+// PUT request
+route.put("/accounts/:id", (req, res) => {
+  const {
+    body,
+    params: { id },
+  } = req;
+
+  const parseId = parseInt(id);
+
+  if (isNaN(parseId)) return res.status(400).send(`Invalid Id`);
+
+  const findUserId = accounts.findIndex((account) => account.id === parseId);
+
+  if (findUserId === -1) return res.status(404).send(`User not found`);
+
+  accounts[findUserId] = { id: parseId, ...body };
+  return res.sendStatus(200);
+});
+
+// PATCH request
+route.patch("/accounts/:id", (req, res) => {
+  const {
+    body,
+    params: { id },
+  } = req;
+
+  const parseId = parseInt(id);
+
+  if (isNaN(parseId)) return res.status(400).send(`Invalid Id`);
+
+  const findUserId = accounts.findIndex((account) => account.id === parseId);
+
+  if (findUserId === -1) return res.status(404).send(`User not found`);
+
+  accounts[findUserId] = { ...accounts[findUserId], ...body }; // Merge the existing account with the new data
+  return res.sendStatus(200);
+});
+
+// DELETE request
+route.delete("/accounts/:id", (req, res) => {
+  const {
+    params: { id },
+  } = req;
+
+  const parseId = parseInt(id);
+
+  if (isNaN(parseId)) return res.status(400).send(`Invalid Id`);
+
+  const index = accounts.findIndex((account) => account.id === parseId);
+
+  if (index === -1) return res.status(404).send(`User not found`);
+
+  accounts.splice(index, 1); // Remove the account from the array
+  return res.sendStatus(204); // No Content
 });
 
 module.exports = route;
